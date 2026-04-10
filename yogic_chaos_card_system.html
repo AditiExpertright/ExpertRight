@@ -1,0 +1,269 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Georgia,serif}
+.wrap{padding:20px;background:var(--color-background-tertiary)}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin:0 0 12px 4px}
+.deck-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:32px;justify-content:center}
+
+.card{width:200px;border-radius:18px;overflow:hidden;border:3px solid;display:flex;flex-direction:column;flex-shrink:0}
+.card-inner{padding:18px 16px 14px;flex:1;display:flex;flex-direction:column;gap:0}
+
+.card-header{display:flex;justify-content:center;margin-bottom:10px}
+.card-tag{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:4px 12px;border-radius:20px}
+
+.card-icon-zone{height:54px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.card-icon-svg{width:48px;height:48px}
+
+.card-divider{height:1px;margin:0 0 10px}
+
+.card-title{font-size:14px;font-weight:700;text-align:center;margin-bottom:5px;line-height:1.25;font-style:normal}
+.card-effect{font-size:11.5px;text-align:center;line-height:1.5;margin-bottom:6px;font-weight:500}
+.card-note{font-size:10px;text-align:center;font-style:italic;line-height:1.4;opacity:.75}
+
+.card-footer{text-align:center;padding:8px 0 6px;font-size:9px;font-weight:700;letter-spacing:.15em;border-top:1px solid}
+
+.card-twist{background:#FBE8F0;border-color:#D4537E}
+.card-twist .card-tag{background:#D4537E;color:#fff}
+.card-twist .card-title{color:#72243E}
+.card-twist .card-effect{color:#993556}
+.card-twist .card-note{color:#72243E}
+.card-twist .card-divider{background:#F4C0D1}
+.card-twist .card-footer{color:#D4537E;border-color:#F4C0D1}
+
+.card-herb{background:#EAF7E0;border-color:#639922}
+.card-herb .card-tag{background:#639922;color:#fff}
+.card-herb .card-title{color:#27500A}
+.card-herb .card-effect{color:#3B6D11}
+.card-herb .card-note{color:#27500A}
+.card-herb .card-divider{background:#C0DD97}
+.card-herb .card-footer{color:#639922;border-color:#C0DD97}
+
+.card-yoga{background:#E8F2FE;border-color:#378ADD}
+.card-yoga .card-tag{background:#185FA5;color:#fff}
+.card-yoga .card-title{color:#0C447C}
+.card-yoga .card-effect{color:#185FA5}
+.card-yoga .card-note{color:#0C447C}
+.card-yoga .card-divider{background:#B5D4F4}
+.card-yoga .card-footer{color:#185FA5;border-color:#B5D4F4}
+
+.card-chaos{background:#FFF0EE;border-color:#E24B4A}
+.card-chaos .card-tag{background:#A32D2D;color:#fff}
+.card-chaos .card-title{color:#791F1F}
+.card-chaos .card-effect{color:#A32D2D}
+.card-chaos .card-note{color:#791F1F}
+.card-chaos .card-divider{background:#F7C1C1}
+.card-chaos .card-footer{color:#A32D2D;border-color:#F7C1C1}
+
+.nav-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;justify-content:center}
+.nav-btn{padding:7px 16px;border-radius:20px;border:1.5px solid;font-size:12px;font-weight:600;cursor:pointer;font-family:Georgia,serif;transition:all .15s}
+.nb-all{border-color:#888780;color:#5F5E5A;background:#F1EFE8}
+.nb-all.on{background:#888780;color:#fff}
+.nb-twist{border-color:#D4537E;color:#993556;background:#FBEAF0}
+.nb-twist.on{background:#D4537E;color:#fff}
+.nb-herb{border-color:#639922;color:#3B6D11;background:#EAF3DE}
+.nb-herb.on{background:#639922;color:#fff}
+.nb-yoga{border-color:#378ADD;color:#185FA5;background:#E6F1FB}
+.nb-yoga.on{background:#378ADD;color:#fff}
+.nb-chaos{border-color:#E24B4A;color:#A32D2D;background:#FCEBEB}
+.nb-chaos.on{background:#E24B4A;color:#fff}
+
+.info-bar{font-size:12px;color:var(--color-text-secondary);text-align:center;margin-bottom:16px}
+.send-btn{display:block;margin:24px auto 0;padding:10px 24px;border-radius:20px;border:1.5px solid #D4537E;background:#FBEAF0;color:#993556;font-size:13px;font-weight:600;cursor:pointer;font-family:Georgia,serif}
+.send-btn:hover{background:#D4537E;color:#fff}
+</style>
+
+<div class="wrap">
+<div class="nav-row">
+  <button class="nav-btn nb-all on" onclick="filter('all',this)">All 120</button>
+  <button class="nav-btn nb-twist" onclick="filter('twist',this)">Wild Twist</button>
+  <button class="nav-btn nb-herb" onclick="filter('herb',this)">Herb</button>
+  <button class="nav-btn nb-yoga" onclick="filter('yoga',this)">Yoga</button>
+  <button class="nav-btn nb-chaos" onclick="filter('chaos',this)">Chaos</button>
+</div>
+<div class="info-bar" id="info">Showing all 120 cards — one unified template, colour-coded by type</div>
+<div class="deck-row" id="grid"></div>
+<button class="send-btn" onclick="sendPrompt('Generate all 120 Yogic Chaos cards in Canva using the unified elegant template — cream background, coloured border and accents per type (pink=Twist, green=Herb, blue=Yoga, red=Chaos), Patanjali branding, no text duplication on any card.')">Send all 120 to Canva ↗</button>
+</div>
+
+<script>
+const TYPES = {
+  twist:{label:'Wild Twist',cls:'card-twist',tag:'Wild Twist',foot:'PATANJALI · YOGIC CHAOS',
+    icon:`<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="card-icon-svg"><circle cx="24" cy="24" r="20" stroke="#D4537E" stroke-width="2" fill="#F4C0D1"/><path d="M16 24 Q20 16 24 24 Q28 32 32 24" stroke="#993556" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="16" cy="24" r="3" fill="#993556"/><circle cx="32" cy="24" r="3" fill="#993556"/></svg>`},
+  herb:{label:'Herb',cls:'card-herb',tag:'Herb',foot:'PATANJALI · YOGIC CHAOS',
+    icon:`<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="card-icon-svg"><path d="M24 38 C24 38 24 22 24 18" stroke="#639922" stroke-width="2.5" stroke-linecap="round"/><path d="M24 26 C18 22 12 24 12 18 C18 16 24 20 24 26Z" fill="#97C459"/><path d="M24 22 C30 18 36 20 36 14 C30 12 24 16 24 22Z" fill="#639922"/><circle cx="24" cy="38" r="3" fill="#639922"/></svg>`},
+  yoga:{label:'Yoga',cls:'card-yoga',tag:'Yoga',foot:'PATANJALI · YOGIC CHAOS',
+    icon:`<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="card-icon-svg"><circle cx="24" cy="11" r="4" fill="#378ADD"/><path d="M24 15 L24 28" stroke="#185FA5" stroke-width="2.5" stroke-linecap="round"/><path d="M15 20 L24 18 L33 20" stroke="#378ADD" stroke-width="2" stroke-linecap="round"/><path d="M24 28 L18 36" stroke="#185FA5" stroke-width="2" stroke-linecap="round"/><path d="M24 28 L30 36" stroke="#185FA5" stroke-width="2" stroke-linecap="round"/></svg>`},
+  chaos:{label:'Chaos',cls:'card-chaos',tag:'Chaos',foot:'PATANJALI · YOGIC CHAOS',
+    icon:`<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="card-icon-svg"><path d="M24 8 L27 19 L38 16 L30 24 L38 32 L27 29 L24 40 L21 29 L10 32 L18 24 L10 16 L21 19 Z" fill="#F09595" stroke="#A32D2D" stroke-width="1.5" stroke-linejoin="round"/></svg>`}
+};
+
+const CARDS = {
+  twist:[
+    {t:'Left Partner Exchange',e:'Swap ALL your BP points with the player on your left.',n:'What goes around, comes around.'},
+    {t:'Right Dosha Swap',e:'Exchange your Dosha token with the player on your right.',n:'Spread the balance disorder.'},
+    {t:'Skip Your Turn',e:'Your next turn is skipped. Sit still and breathe.',n:'Even chaos needs rest.'},
+    {t:'Reverse Direction',e:'Reverse the turn order — now we go the other way.',n:'Chaos loves reversal.'},
+    {t:'Karma Swap',e:'Swap BP with the player who has the highest total.',n:'Karma redistributes wealth.'},
+    {t:'Steal the Balance',e:'Take 10 BP from any player of your choice.',n:'Chaotic redistribution.'},
+    {t:'Generous Soul',e:'Give 10 BP to the player with the lowest BP.',n:'Seva — selfless service.'},
+    {t:'Double Fortune',e:'Your next BP gain is doubled.',n:'Fortune amplified.'},
+    {t:'Soft Landing',e:'Your next BP loss is halved.',n:'Cushion the chaos.'},
+    {t:'Herb Rush',e:'Move immediately to the nearest Herb tile.',n:'Nature calls you home.'},
+    {t:'Chaos Magnet',e:'Move immediately to the nearest Chaos tile.',n:'You attract what you fear.'},
+    {t:'Position Swap',e:'Swap your board position with any player.',n:'Yogic teleportation.'},
+    {t:'Freeze a Foe',e:'Choose one player — skip their next turn.',n:'Stillness imposed.'},
+    {t:'Mass Chaos',e:'Every player draws one Chaos card.',n:'Chaos is contagious.'},
+    {t:'Group Remedy',e:'Every player draws one Herb card.',n:'Healing is shared.'},
+    {t:'Yoga Flash Mob',e:'Every player draws one Yoga card.',n:'Community wellness.'},
+    {t:'Punish the Leader',e:'One player of your choice loses 15 BP.',n:'Ego check.'},
+    {t:'Bless the Weakest',e:'One player of your choice gains 15 BP.',n:'Compassion in action.'},
+    {t:'Karma Shield',e:'You are protected from the next Chaos card or attack.',n:'Sankalpa creates armour.'},
+    {t:'BP Chip Trade',e:'Force a BP chip trade with any one player.',n:'Economy of wellness.'},
+    {t:'Sprint Forward',e:'Move forward 6 spaces on the board.',n:'Momentum unleashed.'},
+    {t:'Step Back',e:'Move backward 4 spaces on the board.',n:'Sometimes retreat is wisdom.'},
+    {t:'Dosha Purge',e:'Remove all your Dosha tokens instantly.',n:'Complete purification.'},
+    {t:'Dosha Bomb',e:'Add 1 Dosha token to every other player.',n:'Chaos distributed equally.'},
+    {t:'Herb for Loss',e:'Lose 10 BP but draw 2 Herb cards.',n:'Short pain, long gain.'},
+    {t:'Gain for Risk',e:'Gain 10 BP but draw 1 Chaos card.',n:'Balance always has a cost.'},
+    {t:'Random BP Swap',e:'Two randomly chosen players swap their BP totals.',n:'Destiny is random.'},
+    {t:'Final Karma Roll',e:'Roll the dice. Gain that number × 5 BP.',n:'Dharma delivers.'},
+    {t:'Everyone Loses 5',e:'All players lose 5 BP. No exceptions.',n:'Shared karma.'},
+    {t:'Everyone Gains 5',e:'All players gain 5 BP. Celebrate together.',n:'Collective healing.'},
+  ],
+  herb:[
+    {t:'Ashwagandha Boost',e:'+15 BP. Remove 1 Vata token.',n:'Adaptogen for stress support.'},
+    {t:'Turmeric Shield',e:'+10 BP. Ignore the next Chaos card effect.',n:'Natural anti-inflammatory.'},
+    {t:'Tulsi Focus',e:'+10 BP. Remove 1 Pitta token.',n:'Holy basil supports immunity.'},
+    {t:'Triphala Cleanse',e:'+12 BP. Remove 1 Kapha token.',n:'Digestive detox blend.'},
+    {t:'Amla Recharge',e:'+8 BP. If below 50 BP, gain an extra +5.',n:'Vitamin C powerhouse.'},
+    {t:'Brahmi Brain',e:'+10 BP. Draw 1 Yoga card.',n:'Supports concentration.'},
+    {t:'Giloy Defender',e:'+12 BP. Remove any 1 Dosha token.',n:'Immunity enhancer.'},
+    {t:'Neem Detox',e:'+10 BP. Add 1 Vata token.',n:'Deep purifying herb.'},
+    {t:'Shatavari Nourish',e:'+8 BP. Remove 1 Pitta token.',n:'Cooling and nourishing.'},
+    {t:'Mulethi Soothe',e:'+7 BP. Remove 1 Pitta token.',n:'Licorice root calms.'},
+    {t:'Ginger Ignite',e:'+10 BP. Add 1 Pitta token.',n:'Stimulates digestion.'},
+    {t:'Aloe Cool',e:'+8 BP. Remove 1 Pitta token.',n:'Cooling and soothing.'},
+    {t:'Cardamom Calm',e:'+6 BP. Remove 1 Vata token.',n:'Warming spice for balance.'},
+    {t:'Clove Charge',e:'+9 BP. Add 1 Pitta token.',n:'Antimicrobial energy.'},
+    {t:'Cinnamon Boost',e:'+8 BP.',n:'Balances blood sugar naturally.'},
+    {t:'Fenugreek Power',e:'+7 BP. Remove 1 Kapha token.',n:'Reduces Kapha buildup.'},
+    {t:'Licorice Restore',e:'+10 BP.',n:'Soothing adaptogenic root.'},
+    {t:'Chyawanprash',e:'+15 BP. Add 1 Kapha token.',n:'Ancient Ayurvedic jam.'},
+    {t:'Arjuna Heart',e:'+12 BP.',n:'Cardiac tonic herb.'},
+    {t:'Haritaki Flow',e:'+10 BP. Remove 1 Vata token.',n:'Rejuvenative and balancing.'},
+    {t:'Bael Digest',e:'+9 BP.',n:'Sacred fruit for digestion.'},
+    {t:'Saffron Lift',e:'+8 BP. Draw 1 Herb card.',n:'Mood elevating spice.'},
+    {t:'Guggul Metabolism',e:'+10 BP. Remove 1 Kapha token.',n:'Purifies fat and toxins.'},
+    {t:'Moringa Vitality',e:'+12 BP.',n:'Superfood packed with nutrients.'},
+    {t:'Black Pepper',e:'+6 BP. Add 1 Pitta token.',n:'Enhances bioavailability.'},
+    {t:'Coriander Cool',e:'+5 BP. Remove 1 Pitta token.',n:'Cooling digestive herb.'},
+    {t:'Mint Refresh',e:'+7 BP.',n:'Refreshes and clears the mind.'},
+    {t:'Ashoka Balance',e:'+8 BP.',n:'Hormonal balance and calm.'},
+    {t:'Shilajit Strength',e:'+15 BP. Add 1 Pitta token.',n:'Mineral resin from mountains.'},
+    {t:'Herbal Tea Break',e:'+5 BP. Skip the next Chaos tile.',n:'Rest and reset with herbs.'},
+  ],
+  yoga:[
+    {t:'Surya Namaskar',e:'Do 5 stretches. Success: +15 BP. Fail: −5 BP.',n:'Sun salutation sequence.'},
+    {t:'Tree Pose',e:'Stand on one leg for 10 seconds. +10 BP.',n:'Develops balance and focus.'},
+    {t:'Pranayama Calm',e:'Take 5 deep breaths. −1 Vata. +5 BP.',n:'Breathwork calms the mind.'},
+    {t:'Laughter Yoga',e:'Make the group laugh. Majority laughs: +15 BP.',n:'Laughter is best medicine.'},
+    {t:'Warrior Pose',e:'Hold power pose for 10 seconds. +10 BP.',n:'Builds strength and confidence.'},
+    {t:'Cobra Stretch',e:'Touch your toes. +8 BP.',n:'Opens chest and spine.'},
+    {t:'Chair Pose',e:'Hold a squat for 10 seconds. +12 BP.',n:'Strengthens legs and core.'},
+    {t:'Balance Walk',e:'Walk a straight line heel-to-toe. +10 BP.',n:'Tests coordination.'},
+    {t:'Meditation Minute',e:'Close eyes for 20 seconds. +10 BP.',n:'Inner stillness restores.'},
+    {t:'Rapid Blink',e:'Blink rapidly for 10 seconds. +5 BP.',n:'Tratak eye exercise.'},
+    {t:'Jumping Energy',e:'Do 10 jumps. +12 BP.',n:'Activates the lymph system.'},
+    {t:'Silent Focus',e:'Stay completely silent for 30 seconds. +8 BP.',n:'Mauna practice for clarity.'},
+    {t:'Shoulder Roll',e:'Roll shoulders for 15 seconds. +6 BP.',n:'Releases held tension.'},
+    {t:'Power Clap',e:'Clap loudly 5 times. +5 BP.',n:'Stimulates hand meridians.'},
+    {t:'Spine Twist',e:'Rotate your torso fully. +8 BP.',n:'Detoxifies spine and organs.'},
+    {t:'Lion Breath',e:'Perform lion breath pose. +10 BP.',n:'Simhasana releases tension.'},
+    {t:'Quick Run',e:'Jog in place for 10 seconds. +12 BP.',n:'Cardio for vital energy.'},
+    {t:'Palm Press',e:'Press palms together firmly. +6 BP.',n:'Activates hand energy.'},
+    {t:'Group Stretch',e:'Everyone stretches. You gain +10 BP.',n:'Unity in wellness.'},
+    {t:'Flex Pose',e:'Strike a strength pose. +7 BP.',n:'Embody inner strength.'},
+    {t:'Head Nod',e:'Nod slowly 10 times. +5 BP.',n:'Neck release and grounding.'},
+    {t:'Balance Challenge',e:'Stand on one leg, eyes closed. +15 BP.',n:'Advanced proprioception.'},
+    {t:'Slow Motion',e:'Move in slow motion for 10 seconds. +8 BP.',n:'Mindful movement practice.'},
+    {t:'Yoga Freeze',e:'Hold any pose still for 15 seconds. +10 BP.',n:'Stillness is also yoga.'},
+    {t:'Calm Smile',e:'Smile wide for 10 seconds. +6 BP.',n:'Inner smile meditation.'},
+    {t:'Breath Hold',e:'Hold breath safely. +10 BP.',n:'Kumbhaka builds prana.'},
+    {t:'Energy Spin',e:'Spin once in place safely. +5 BP.',n:'Dervish spin for energy.'},
+    {t:'Stretch & Reach',e:'Reach as high as you can. +7 BP.',n:'Full body expansion.'},
+    {t:'Quick Meditation',e:'+10 BP. Remove 1 Dosha token.',n:'Cleanse body and mind.'},
+    {t:'Team Pose',e:'Form a group pose together. +12 BP.',n:'Group harmony heals.'},
+  ],
+  chaos:[
+    {t:'Junk Food Binge',e:'−15 BP. Add 1 Kapha token.',n:'Ama accumulates from junk.'},
+    {t:'Late Night Scrolling',e:'−10 BP. Add 1 Vata token.',n:'Blue light disrupts Vata.'},
+    {t:'Angry Outburst',e:'−12 BP. Add 1 Pitta token.',n:'Pitta flares with anger.'},
+    {t:'Missed Workout',e:'−8 BP.',n:'Stagnation builds toxins.'},
+    {t:'Sugar Crash',e:'−10 BP. Add 1 Kapha token.',n:'Blood sugar imbalance.'},
+    {t:'Overthinking',e:'−10 BP. Add 1 Vata token.',n:'Racing mind exhausts Vata.'},
+    {t:'Heat Stroke',e:'−12 BP. Add 1 Pitta token.',n:'Pitta aggravated by heat.'},
+    {t:'Fast Food Party',e:'Pay 5 BP or add 1 Kapha token.',n:'Choose your compromise.'},
+    {t:'Sleepless Night',e:'−10 BP. Add 1 Vata token.',n:'Sleep loss disturbs Vata.'},
+    {t:'Stress Meeting',e:'−10 BP. Add 1 Pitta token.',n:'Pitta rises under pressure.'},
+    {t:'Laziness Mode',e:'−8 BP. Add 1 Kapha token.',n:'Excess Kapha causes lethargy.'},
+    {t:'Spicy Overload',e:'−10 BP. Add 1 Pitta token.',n:'Too much spice inflames.'},
+    {t:'Cold & Cough',e:'−8 BP.',n:'Immunity compromised.'},
+    {t:'Energy Drain',e:'−12 BP.',n:'Ojas depleted.'},
+    {t:'Mood Swing',e:'−6 BP.',n:'Dosha imbalance within.'},
+    {t:'Procrastination',e:'Skip your next turn.',n:'Tamas mode activated.'},
+    {t:'Gaming Marathon',e:'−10 BP. Add 1 Kapha token.',n:'Sedentary Kapha lifestyle.'},
+    {t:'Social Media Fight',e:'−12 BP. Add 1 Pitta token.',n:'Digital Pitta outburst.'},
+    {t:'Anxiety Rush',e:'−10 BP. Add 1 Vata token.',n:'Vata panic response.'},
+    {t:'Office Burnout',e:'−15 BP. Add 1 Pitta token.',n:'Pitta consumed by overwork.'},
+    {t:'Junk Snacking',e:'−8 BP. Add 1 Kapha token.',n:'Mindless eating.'},
+    {t:'Oversleep',e:'−5 BP.',n:'Excess Kapha dulls the mind.'},
+    {t:'Dehydration',e:'−10 BP.',n:'Water is prana.'},
+    {t:'Sunburn',e:'−8 BP. Add 1 Pitta token.',n:'Pitta flares with heat.'},
+    {t:'Fast Talking',e:'−5 BP. Add 1 Vata token.',n:'Vata in overdrive.'},
+    {t:'Heavy Meal',e:'−10 BP. Add 1 Kapha token.',n:'Ama from heavy food.'},
+    {t:'Panic Mode',e:'−12 BP. Add 1 Vata token.',n:'Fear disturbs Vata.'},
+    {t:'Headache',e:'−8 BP.',n:'Energy blockage.'},
+    {t:'Peer Pressure',e:'−10 BP.',n:'External chaos within.'},
+    {t:'Mental Fog',e:'−10 BP. Add 1 Kapha token.',n:'Kapha clouds the mind.'},
+  ]
+};
+
+let current='all';
+
+function makeCard(d,type){
+  const T=TYPES[type];
+  return `<div class="card ${T.cls}">
+    <div class="card-inner">
+      <div class="card-header"><span class="card-tag">${T.tag}</span></div>
+      <div class="card-icon-zone">${T.icon}</div>
+      <div class="card-divider" style="background:currentColor;opacity:.15"></div>
+      <div style="height:8px"></div>
+      <div class="card-title">${d.t}</div>
+      <div style="height:5px"></div>
+      <div class="card-effect">${d.e}</div>
+      <div style="height:4px"></div>
+      <div class="card-note">${d.n}</div>
+    </div>
+    <div class="card-footer">${T.foot}</div>
+  </div>`;
+}
+
+function render(){
+  const g=document.getElementById('grid');
+  let html='',count=0;
+  const types=current==='all'?['twist','herb','yoga','chaos']:[current];
+  types.forEach(tp=>CARDS[tp].forEach(d=>{html+=makeCard(d,tp);count++;}));
+  g.innerHTML=html;
+  document.getElementById('info').textContent=`Showing ${count} cards — unified template, colour-coded by type`;
+}
+
+function filter(type,btn){
+  current=type;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+}
+
+render();
+</script>
